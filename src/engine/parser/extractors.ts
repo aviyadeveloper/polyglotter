@@ -1,4 +1,4 @@
-import {ParserConfigLanguageData} from "./types";
+import {ParserConfigLanguageData} from "./config";
 import {getFirstMatch, getStringBetween, toEndOfLine} from "./util";
 import {HelpVerb, Tenses} from "../dictionary/verbs";
 
