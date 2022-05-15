@@ -1,0 +1,47 @@
+[
+  {
+    "<page>": {
+      "meta-data": {
+        "<title>": "FORM"
+      },
+      "content": {
+        "native-language": {
+          "word-definition-1": {
+            "type": "WORD_TYPE",
+            "type-specific-data": {},
+            "acronyms": {},
+            "antonyms": {},
+            "explanations": {},
+            "examples": {}
+          },
+          "word-definition-2": {}
+        },
+        "non-native-language-1": {},
+        "non-native-langauge-2": {}
+      }
+    }
+  },
+  {
+    "form": "<title>",
+    "words": [
+      {
+        "type": {},
+        "meaning": "explanations",
+        "types-specific-data": {},
+        "acronyms": {},
+        "antonyms": {},
+        "explanations": {},
+        "examples": {}
+      },
+      {
+        "type": {},
+        "meaning": "explanations",
+        "types-specific-data": {},
+        "acronyms": {},
+        "antonyms": {},
+        "explanations": {},
+        "examples": {}
+      }
+    ]
+  }
+]
