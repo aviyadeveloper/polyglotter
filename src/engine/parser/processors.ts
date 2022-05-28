@@ -33,12 +33,14 @@ export const Processors = (
     const irregular = validate.isIrregular(firstLine);
     const transitive = transitivity(firstLine);
     const reflexive = validate.isReflexive(firstLine);
+    const seperable = validate.isSeperable(firstLine);
     const tenses: Tenses = extract.Tenses(tensesRaw);
 
     return {
       irregular,
       transitive,
       reflexive,
+      seperable,
       tenses,
     };
   };
@@ -95,12 +97,14 @@ export const Processors = (
                   const irregular = validate.isIrregular(definition);
                   const transitive = transitivity(definition);
                   const reflexive = validate.isReflexive(definition);
+                  const seperable = validate.isSeperable(definition);
 
                   // overwrite general data if got specific data from direct definition.
                   extraData = {
                     irregular: irregular || typeSpecificData.verb.irregular,
                     reflexive: reflexive || typeSpecificData.verb.reflexive,
-                    transitivity:
+                    seperable: seperable || typeSpecificData.verb.seperable,
+                    transitive:
                       transitive !== Transitivity.UNKNOWN
                         ? transitive
                         : typeSpecificData.verb.irregular,

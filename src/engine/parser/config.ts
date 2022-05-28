@@ -43,6 +43,7 @@ export type ParserConfigLanguageData = {
           INTRANSITIVE: RegExp;
           IRREGULAR: RegExp;
           REFLEXIVE: RegExp;
+          SEPERABLE: RegExp;
           TENSES: {
             ALL: RegExp;
             PRESENT: {
@@ -105,10 +106,11 @@ export const PARSER_CONFIG: ParserConfig = {
         },
         DATA: {
           VERB: {
-            TRANSITIVE: /[^in]trans.?/,
+            TRANSITIVE: /[^in]trans.*?/,
             INTRANSITIVE: /intrans.*?/,
             REFLEXIVE: /refl.*?/,
             IRREGULAR: /unreg.*?/,
+            SEPERABLE: /trenn.*?/,
             TENSES: {
               ALL: /\{\{Deutsch Verb Übersicht.*?\}\}/gms,
               PRESENT: {

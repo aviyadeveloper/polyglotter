@@ -6,6 +6,7 @@ export type Validators = {
   isIrregular: (content: string) => boolean;
   isLanguageSectionNative: (section: string) => boolean;
   isReflexive: (content: string) => boolean;
+  isSeperable: (content: string) => boolean;
   isTransitive: (content: string) => boolean;
 };
 
@@ -68,6 +69,9 @@ export const Validators = (config: ParserConfigLanguageData): Validators => {
     // Todo: Also check for references to "sich"
     content.match(config.TAGS.WORD.DATA.VERB.REFLEXIVE) ? true : false;
 
+  const isSeperable = (content: string) =>
+    content.match(config.TAGS.WORD.DATA.VERB.SEPERABLE) ? true : false;
+
   const isTransitive = (content: string) =>
     content.match(config.TAGS.WORD.DATA.VERB.TRANSITIVE) ? true : false;
 
@@ -77,6 +81,7 @@ export const Validators = (config: ParserConfigLanguageData): Validators => {
     isIrregular,
     isLanguageSectionNative,
     isReflexive,
+    isSeperable,
     isTransitive,
   };
 };

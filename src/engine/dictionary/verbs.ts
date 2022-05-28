@@ -1,9 +1,9 @@
 export type VerbData = {
   irregular: boolean; // inconsistent in de.wiktionary, default to false and fill later.
-  transitive: Transitivity; // requires an object to affect.
   reflexive: boolean;
-  // TODO: Add trennbar?
+  seperable: boolean;
   tenses: Tenses;
+  transitive: Transitivity; // requires an object to affect.
 };
 
 export enum Transitivity {
