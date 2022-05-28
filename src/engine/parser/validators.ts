@@ -2,7 +2,11 @@ import {ParserConfigLanguageData} from "./config";
 
 export type Validators = {
   hasRelevantType: (types: string[]) => boolean;
+  isIntransitive: (content: string) => boolean;
+  isIrregular: (content: string) => boolean;
   isLanguageSectionNative: (section: string) => boolean;
+  isReflexive: (content: string) => boolean;
+  isTransitive: (content: string) => boolean;
 };
 
 export const Validators = (config: ParserConfigLanguageData): Validators => {
@@ -48,14 +52,31 @@ export const Validators = (config: ParserConfigLanguageData): Validators => {
     _isAbbreviation(types) ||
     _isPronoun(types);
 
+  const isIntransitive = (content: string) =>
+    content.match(config.TAGS.WORD.DATA.VERB.INTRANSITIVE) ? true : false;
+
+  const isIrregular = (content: string) =>
+    content.match(RegExp(config.TAGS.WORD.DATA.VERB.IRREGULAR)) ? true : false;
+
   const isLanguageSectionNative = (section: string) => {
     // Take section header line and check if it is native
     const sectionHeader = section.split("\n", 1)[0];
     return sectionHeader.indexOf(config.TAGS.NATIVE_SECTION) > -1;
   };
 
+  const isReflexive = (content: string) =>
+    // Todo: Also check for references to "sich"
+    content.match(config.TAGS.WORD.DATA.VERB.REFLEXIVE) ? true : false;
+
+  const isTransitive = (content: string) =>
+    content.match(config.TAGS.WORD.DATA.VERB.TRANSITIVE) ? true : false;
+
   return {
-    isLanguageSectionNative,
     hasRelevantType,
+    isIntransitive,
+    isIrregular,
+    isLanguageSectionNative,
+    isReflexive,
+    isTransitive,
   };
 };

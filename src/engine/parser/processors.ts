@@ -1,12 +1,18 @@
 import {ParserConfigLanguageData} from "./config";
 import {getFirstMatch} from "./util";
-import {Tenses, VerbData} from "../dictionary/verbs";
+import {Tenses, Transitivity, VerbData} from "../dictionary/verbs";
 import {Extractors} from "./extractors";
 import {Dictionary} from "../dictionary";
 import {Validators} from "./validators";
 
+type TypeSpecificData = {
+  verb?: VerbData;
+  extra?: string;
+};
+
 export type Processors = {
-  Page: (page: string, dictionary: Dictionary) => void;
+  page: (page: string, dictionary: Dictionary) => void;
+  transitivity: (content: string) => Transitivity;
 };
 
 export const Processors = (
@@ -17,17 +23,22 @@ export const Processors = (
   /*
    * Private Methods
    */
-  const _Verb = (content: string): VerbData => {
+  const _Verb = (unit: string): VerbData => {
+    const firstLine = unit.substring(0, unit.indexOf("\n"));
     const tensesRaw = getFirstMatch(
-      content,
+      unit,
       config.TAGS.WORD.DATA.VERB.TENSES.ALL
     );
 
+    const irregular = validate.isIrregular(firstLine);
+    const transitive = transitivity(firstLine);
+    const reflexive = validate.isReflexive(firstLine);
     const tenses: Tenses = extract.Tenses(tensesRaw);
+
     return {
-      irregular: false,
-      transitive: false,
-      reflexive: false,
+      irregular,
+      transitive,
+      reflexive,
       tenses,
     };
   };
@@ -36,7 +47,7 @@ export const Processors = (
    * Public Methods
    */
 
-  const Page = (page: string, dictionary: Dictionary) => {
+  const page = (page: string, dictionary: Dictionary) => {
     const form = extract.Form(page);
 
     type Entry = {
@@ -59,16 +70,17 @@ export const Processors = (
           if (validate.hasRelevantType(types)) {
             // TODO: map type
 
-            // TODO: get type-specific data
-            const typeSpecificData = types.includes(config.TAGS.WORD.TYPES.VERB)
-              ? _Verb(unit)
+            // get type-specific data
+            const typeSpecificData: TypeSpecificData = types.includes(
+              config.TAGS.WORD.TYPES.VERB
+            )
+              ? {verb: _Verb(unit)}
               : {
-                  extraData:
+                  extra:
                     "This word type still does not have an extra data processor.",
                 };
 
             // get generic data
-
             const definitions = extract.Definitions(unit);
             const examples = extract.Examples(unit);
             const synonyms = extract.Synonyms(unit);
@@ -77,14 +89,36 @@ export const Processors = (
             // Map generic data by definitions and build word.
             for (const definition of definitions) {
               const tag = definition.substring(0, definition.indexOf("]") + 1);
+              let extraData = undefined;
               if (tag) {
+                if (typeSpecificData.verb) {
+                  const irregular = validate.isIrregular(definition);
+                  const transitive = transitivity(definition);
+                  const reflexive = validate.isReflexive(definition);
+
+                  // overwrite general data if got specific data from direct definition.
+                  extraData = {
+                    irregular: irregular || typeSpecificData.verb.irregular,
+                    reflexive: reflexive || typeSpecificData.verb.reflexive,
+                    transitivity:
+                      transitive !== Transitivity.UNKNOWN
+                        ? transitive
+                        : typeSpecificData.verb.irregular,
+                    tenses: typeSpecificData.verb.tenses,
+                  };
+                } else {
+                  extraData = {
+                    data: "This word type still does not have an extra data processor.",
+                  };
+                }
+
                 const word = {
                   definition,
                   types,
                   examples: examples.filter((e) => e.indexOf(tag) > -1),
                   synonyms: synonyms.filter((s) => s.indexOf(tag) > -1),
                   antonyms: antonyms.filter((a) => a.indexOf(tag) > -1),
-                  ...typeSpecificData,
+                  ...extraData,
                 };
                 entry.words.push(word);
               }
@@ -96,7 +130,26 @@ export const Processors = (
     }
   };
 
+  const transitivity = (content: string) => {
+    let transitivity = Transitivity.UNKNOWN;
+
+    if (validate.isTransitive(content)) {
+      transitivity = Transitivity.TRANSITIVE;
+    }
+    if (validate.isIntransitive(content)) {
+      transitivity = Transitivity.INTRANSITIVE;
+    }
+
+    // Possibly redundant, check if any mixed state actually exists from data.
+    if (validate.isTransitive(content) && validate.isIntransitive(content)) {
+      transitivity = Transitivity.MIXED;
+    }
+
+    return transitivity;
+  };
+
   return {
-    Page,
+    page,
+    transitivity,
   };
 };
