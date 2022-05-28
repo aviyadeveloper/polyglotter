@@ -43,7 +43,7 @@ export const runEngine = async (lang: Language) => {
       case IteratorState.COLLECT:
         if (line.indexOf("</page>") > -1) {
           iteratorState = IteratorState.NULL;
-          parser.process.Page(page, dictionary);
+          parser.process.page(page, dictionary);
           page = "";
         } else {
           page += `${line}\n`;
