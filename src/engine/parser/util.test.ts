@@ -32,3 +32,19 @@ test("get string between two tags", () => {
     getStringBetween("<text>", "notFound", str5);
   }).toThrow("Closing Tag not found in string.");
 });
+
+test("get first match", () => {
+  // Arrange
+  const str1 =
+    "some text with a few <foo> repeating <bar> elements to match on <baz> and so on";
+
+  // Act
+  const res1 = getFirstMatch(str1, /\<.*?\>/);
+  const res2 = getFirstMatch(str1, /\<b.*?\>/);
+  const res3 = getFirstMatch(str1, /\<notFound.*?\>/);
+
+  // Assert
+  expect(res1).toBe("<foo>");
+  expect(res2).toBe("<bar>");
+  expect(res3).toBe("");
+});
