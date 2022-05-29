@@ -22,3 +22,9 @@ export const simpleErrorBubbler = (error: Error) => {
 export const simpleErrorCatcher = (error: Error) => {
   error && console.log("Error:" + error);
 };
+
+export const throwIf = (condition: boolean, message: string) => {
+  if (condition) {
+    throw Error(message);
+  }
+};
