@@ -3,7 +3,7 @@ import {getFirstMatch} from "./util";
 import {Tenses, Transitivity, VerbData} from "../dictionary/verbs";
 import {Extractors} from "./extractors";
 import {Dictionary} from "../dictionary";
-import {Validators} from "./validators";
+import {Validator} from "./validator";
 
 type TypeSpecificData = {
   verb?: VerbData;
@@ -18,7 +18,7 @@ export type Processors = {
 export const Processors = (
   config: ParserConfigLanguageData,
   extract: Extractors,
-  validate: Validators
+  validate: Validator
 ): Processors => {
   /*
    * Private Methods

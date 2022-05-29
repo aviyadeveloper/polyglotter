@@ -1,13 +1,13 @@
 import {Language} from "../types";
 import {PARSER_CONFIG} from "./config";
-import {Validators} from "./validators";
+import {Validator} from "./validator";
 import {ParserConfigLanguageData} from "./config";
 import {Extractors} from "./extractors";
 import {Processors} from "./processors";
 
 export type Parser = {
   config: ParserConfigLanguageData;
-  validate: Validators;
+  validate: Validator;
   extract: Extractors;
   process: Processors;
   getRawFilePath: () => string;
@@ -15,7 +15,7 @@ export type Parser = {
 
 export function Parser(lang: Language): Parser {
   const config = PARSER_CONFIG[`${lang}`];
-  const validate = Validators(config);
+  const validate = new Validator(config);
   const extract = Extractors(config);
   const process = Processors(config, extract, validate);
 
