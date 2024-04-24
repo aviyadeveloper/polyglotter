@@ -13,9 +13,14 @@ enum IteratorState {
   NULL,
 }
 
+/**
+ * Run the engine according to the language give.
+ * Depends on a availability of language configuartion setup,
+ * and access to raw xml wiktionary dump file (not part of git control due to size).
+ */
 export const runEngine = async (lang: Language) => {
   const db = setupDatabase(lang);
-  const parser = Parser(lang);
+  const parser = new Parser(lang);
 
   flushDirSync("data/pages/");
   const dictionary: Dictionary = {
@@ -43,7 +48,7 @@ export const runEngine = async (lang: Language) => {
       case IteratorState.COLLECT:
         if (line.indexOf("</page>") > -1) {
           iteratorState = IteratorState.NULL;
-          parser.process.page(page, dictionary);
+          parser.processor.page(page, dictionary);
           page = "";
         } else {
           page += `${line}\n`;

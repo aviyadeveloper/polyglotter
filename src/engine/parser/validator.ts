@@ -1,5 +1,10 @@
 import {ParserConfigLanguageData} from "./config";
 
+/**
+ * Distinguish and cataogrize different linguistic forms using the language configuration.
+ * @constructor
+ * @param config ParserConfigLanguageData
+ */
 export class Validator {
   config: ParserConfigLanguageData;
 
@@ -7,48 +12,47 @@ export class Validator {
     this.config = config;
   }
 
-  /*
-   * Private Methods
-   */
+  /* Private Methods */
 
-  private isAbbreviation = (types: string[]) =>
+  private _isAbbreviation = (types: string[]) =>
     types.includes(this.config.TAGS.WORD.TYPES.ABBREVIATION);
 
-  private isAdjective = (types: string[]) =>
+  private _isAdjective = (types: string[]) =>
     types.includes(this.config.TAGS.WORD.TYPES.ADJECTIVE);
 
-  private isAdverb = (types: string[]) =>
+  private _isAdverb = (types: string[]) =>
     types.includes(this.config.TAGS.WORD.TYPES.ADVERB);
 
-  private isArticle = (types: string[]) =>
+  private _isArticle = (types: string[]) =>
     types.includes(this.config.TAGS.WORD.TYPES.ARTICLE);
 
-  private isNoun = (types: string[]) =>
+  private _isNoun = (types: string[]) =>
     types.includes(this.config.TAGS.WORD.TYPES.NOUN);
 
-  private isPrefix = (types: string[]) =>
+  private _isPrefix = (types: string[]) =>
     types.includes(this.config.TAGS.WORD.TYPES.PREFIX);
 
-  private isPronoun = (types: string[]) =>
+  private _isPronoun = (types: string[]) =>
     // Type pronoun options: "personalPronomen, Pronomen" etc. requires regex for P/p
     types.join(" ").match(this.config.TAGS.WORD.TYPES.PRONOUN) ? true : false;
 
-  private isVerb = (types: string[]) =>
+  private _isVerb = (types: string[]) =>
     types.includes(this.config.TAGS.WORD.TYPES.VERB);
 
-  /*
-   * Public Methods
-   */
+  /* Public Methods */
 
   public hasRelevantType = (types: string[]) =>
-    this.isVerb(types) ||
-    this.isNoun(types) ||
-    this.isAdjective(types) ||
-    this.isAdverb(types) ||
-    this.isPrefix(types) ||
-    this.isArticle(types) ||
-    this.isAbbreviation(types) ||
-    this.isPronoun(types);
+    this._isVerb(types) ||
+    this._isNoun(types) ||
+    this._isAdjective(types) ||
+    this._isAdverb(types) ||
+    this._isPrefix(types) ||
+    this._isArticle(types) ||
+    this._isAbbreviation(types) ||
+    this._isPronoun(types);
+
+  public isTransitive = (content: string) =>
+    content.match(this.config.TAGS.WORD.DATA.VERB.TRANSITIVE) ? true : false;
 
   public isIntransitive = (content: string) =>
     content.match(this.config.TAGS.WORD.DATA.VERB.INTRANSITIVE) ? true : false;
@@ -70,7 +74,4 @@ export class Validator {
 
   public isSeperable = (content: string) =>
     content.match(this.config.TAGS.WORD.DATA.VERB.SEPERABLE) ? true : false;
-
-  public isTransitive = (content: string) =>
-    content.match(this.config.TAGS.WORD.DATA.VERB.TRANSITIVE) ? true : false;
 }

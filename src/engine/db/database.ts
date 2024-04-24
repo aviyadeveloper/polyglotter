@@ -2,11 +2,15 @@ import Database from "better-sqlite3";
 import {Language} from "../types";
 import {flushDirSync} from "../util";
 
+/**
+ * Wipe any old sqlite database and setup up new database with base tables.
+ */
 export const setupDatabase = (lang: Language) => {
-  console.log("flushing db dir.");
+  // New fresh database.
   flushDirSync("data/sqlite");
-  console.log("create new db.");
   const db = new Database(`data/sqlite/dict_${lang}.db`);
+
+  // Setup basic tables.
   db.prepare(
     `
       CREATE TABLE forms (

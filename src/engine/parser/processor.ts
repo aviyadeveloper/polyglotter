@@ -1,7 +1,7 @@
 import {ParserConfigLanguageData} from "./config";
 import {getFirstMatch} from "./util";
-import {Tenses, Transitivity, VerbData} from "../dictionary/verbs";
-import {Extractors} from "./extractors";
+import {Transitivity, VerbData} from "../dictionary/verbs";
+import {Extractor} from "./extractor";
 import {Dictionary} from "../dictionary";
 import {Validator} from "./validator";
 
@@ -10,83 +10,87 @@ type TypeSpecificData = {
   extra?: string;
 };
 
-export type Processors = {
-  page: (page: string, dictionary: Dictionary) => void;
-  transitivity: (content: string) => Transitivity;
+type Entry = {
+  form: string;
+  words: any[];
 };
 
-export const Processors = (
-  config: ParserConfigLanguageData,
-  extract: Extractors,
-  validate: Validator
-): Processors => {
-  /*
-   * Private Methods
-   */
-  const _Verb = (unit: string): VerbData => {
+/**
+ * Process raw data using validator and extractor.
+ * @constructor
+ * @param config ParserConfigLanguageData
+ * @param validator Validator
+ * @param extractor Extractor
+ */
+export class Processor {
+  config: ParserConfigLanguageData;
+  validator: Validator;
+  extractor: Extractor;
+
+  constructor(
+    config: ParserConfigLanguageData,
+    validator: Validator,
+    extractor: Extractor
+  ) {
+    this.config = config;
+    this.extractor = extractor;
+    this.validator = validator;
+  }
+
+  /* Private Methods */
+
+  private _processVerb = (unit: string): VerbData => {
     const firstLine = unit.substring(0, unit.indexOf("\n"));
     const tensesRaw = getFirstMatch(
       unit,
-      config.TAGS.WORD.DATA.VERB.TENSES.ALL
+      this.config.TAGS.WORD.DATA.VERB.TENSES.ALL
     );
 
-    const irregular = validate.isIrregular(firstLine);
-    const transitive = transitivity(firstLine);
-    const reflexive = validate.isReflexive(firstLine);
-    const seperable = validate.isSeperable(firstLine);
-    const tenses: Tenses = extract.Tenses(tensesRaw);
-
     return {
-      irregular,
-      transitive,
-      reflexive,
-      seperable,
-      tenses,
+      irregular: this.validator.isIrregular(firstLine),
+      transitive: this.transitivity(firstLine),
+      reflexive: this.validator.isReflexive(firstLine),
+      seperable: this.validator.isSeperable(firstLine),
+      tenses: this.extractor.getTenses(tensesRaw),
     };
   };
 
-  /*
-   * Public Methods
-   */
+  /* Public Methods */
 
-  const page = (page: string, dictionary: Dictionary) => {
-    const form = extract.Form(page);
-
-    type Entry = {
-      form: string;
-      words: any[];
-    };
+  page = (page: string, dictionary: Dictionary) => {
+    const form = this.extractor.getForm(page);
 
     const entry: Entry = {
       form,
       words: [],
     };
 
-    const content = extract.ContentFromPage(page);
-    const lngSections = extract.LanguageSections(content);
+    const content = this.extractor.getContentFromPage(page);
+    const lngSections = this.extractor.getLanguageSections(content);
+
     for (let lngSection of lngSections) {
-      if (validate.isLanguageSectionNative(lngSection)) {
-        const wordUnits = extract.WordUnits(lngSection);
+      if (this.validator.isLanguageSectionNative(lngSection)) {
+        const wordUnits = this.extractor.getWordUnits(lngSection);
         for (let unit of wordUnits) {
-          const types = extract.WordTypes(unit);
-          if (validate.hasRelevantType(types)) {
+          const types = this.extractor.getWordTypes(unit);
+          if (this.validator.hasRelevantType(types)) {
             // TODO: map type
 
             // get type-specific data
             const typeSpecificData: TypeSpecificData = types.includes(
-              config.TAGS.WORD.TYPES.VERB
+              this.config.TAGS.WORD.TYPES.VERB
             )
-              ? {verb: _Verb(unit)}
+              ? {verb: this._processVerb(unit)}
               : {
                   extra:
                     "This word type still does not have an extra data processor.",
                 };
 
             // get generic data
-            const definitions = extract.Definitions(unit);
-            const examples = extract.Examples(unit);
-            const synonyms = extract.Synonyms(unit);
-            const antonyms = extract.Antonymes(unit);
+            const definitions = this.extractor.getDefinitions(unit);
+            const examples = this.extractor.getExamples(unit);
+            const synonyms = this.extractor.getSynonyms(unit);
+            const antonyms = this.extractor.getAntonymes(unit);
 
             // Map generic data by definitions and build word.
             for (const definition of definitions) {
@@ -94,10 +98,10 @@ export const Processors = (
               let extraData = undefined;
               if (tag) {
                 if (typeSpecificData.verb) {
-                  const irregular = validate.isIrregular(definition);
-                  const transitive = transitivity(definition);
-                  const reflexive = validate.isReflexive(definition);
-                  const seperable = validate.isSeperable(definition);
+                  const irregular = this.validator.isIrregular(definition);
+                  const transitive = this.transitivity(definition);
+                  const reflexive = this.validator.isReflexive(definition);
+                  const seperable = this.validator.isSeperable(definition);
 
                   // overwrite general data if got specific data from direct definition.
                   extraData = {
@@ -134,26 +138,24 @@ export const Processors = (
     }
   };
 
-  const transitivity = (content: string) => {
+  transitivity = (content: string) => {
     let transitivity = Transitivity.UNKNOWN;
 
-    if (validate.isTransitive(content)) {
+    if (this.validator.isTransitive(content)) {
       transitivity = Transitivity.TRANSITIVE;
     }
-    if (validate.isIntransitive(content)) {
+    if (this.validator.isIntransitive(content)) {
       transitivity = Transitivity.INTRANSITIVE;
     }
 
     // Possibly redundant, check if any mixed state actually exists from data.
-    if (validate.isTransitive(content) && validate.isIntransitive(content)) {
+    if (
+      this.validator.isTransitive(content) &&
+      this.validator.isIntransitive(content)
+    ) {
       transitivity = Transitivity.MIXED;
     }
 
     return transitivity;
   };
-
-  return {
-    page,
-    transitivity,
-  };
-};
+}

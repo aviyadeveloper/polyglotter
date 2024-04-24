@@ -71,7 +71,8 @@ export type ParserConfigLanguageData = {
 export const PARSER_CONFIG: ParserConfig = {
   GERMAN: {
     FILES: {
-      RAW_FILE_PATH: "data/raw/dewiktionary-20210420-pages-articles.xml",
+      RAW_FILE_PATH: "data/raw/dewiktionary-20240420-pages-articles.xml",
+                               
     },
     TAGS: {
       HEADERS: {

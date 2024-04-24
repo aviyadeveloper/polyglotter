@@ -28,7 +28,7 @@ Extension of the simply linguistic shape of the [Form](#form): gender for nouns,
 
 ### Sections
 
-Each page, while constrained to one form, may have various sections with different details relevant for the form. This is may be the case when a form has various word-types associated to it, or relates to different words with basic data difference. Sometimes it is just due to general disorginzation of the wikitionray data.
+Each page, while constrained to one form, may have various sections with different details relevant for the form. This may be the case when a form has various word-types associated to it, or relates to different words with basic data difference. Sometimes it is just due to general disorginzation of the wikitionray data.
 
 For example: The form "Leiter" has 3 different sections:
 
