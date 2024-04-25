@@ -140,11 +140,11 @@ export class Extractor {
   getTag = (definition: string) =>
     definition.substring(0, definition.indexOf("]") + 1);
 
-  _hasTag = (tag: string, data: string[]) => data.indexOf(tag) > -1;
+  _hasTag = (tag: string, data: string) => data.indexOf(tag) > -1;
 
   /**
    * Filter data by tag association
    */
   getDataForTag = (tag: string, data: string[]) =>
-    data.filter((d) => this._hasTag(tag, data));
+    data.filter((d) => this._hasTag(tag, d));
 }

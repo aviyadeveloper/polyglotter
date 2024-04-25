@@ -22,8 +22,20 @@ export const runEngine = async (lang: Language) => {
   // Finish
   console.log("Finished running parser!");
   console.log("found", parser.getDictoniaryEntriesLength(), "relevant forms");
-  console.timeEnd("scanData");
+
+  // Print a few random forms
+  console.log(
+    JSON.stringify({Leiter: parser.dictionary.forms["Leiter"]}, null, 2)
+  );
+  console.log(
+    JSON.stringify({schlagen: parser.dictionary.forms["schlagen"]}, null, 2)
+  );
+  console.log(
+    JSON.stringify({umziehen: parser.dictionary.forms["umziehen"]}, null, 2)
+  );
+
   db.close();
+  console.timeEnd("scanData");
 };
 
 // console.log(JSON.stringify(dictionary, null, 2));
