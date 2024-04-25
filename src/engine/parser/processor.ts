@@ -1,4 +1,4 @@
-import {ParserConfigLanguageData} from "./config";
+import {Config} from "./config";
 import {getFirstMatch} from "./util";
 import {Transitivity, VerbData} from "../dictionary/verbs";
 import {Extractor} from "./extractor";
@@ -16,22 +16,18 @@ type Entry = {
 };
 
 /**
- * Process raw data using validator and extractor.
+ * Process raw data using validator to identify it and extractor to extract accordingly.
  * @constructor
- * @param config ParserConfigLanguageData
+ * @param config Config
  * @param validator Validator
  * @param extractor Extractor
  */
 export class Processor {
-  config: ParserConfigLanguageData;
+  config: Config;
   validator: Validator;
   extractor: Extractor;
 
-  constructor(
-    config: ParserConfigLanguageData,
-    validator: Validator,
-    extractor: Extractor
-  ) {
+  constructor(config: Config, validator: Validator, extractor: Extractor) {
     this.config = config;
     this.extractor = extractor;
     this.validator = validator;

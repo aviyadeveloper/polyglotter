@@ -1,16 +1,16 @@
-import {ParserConfigLanguageData} from "./config";
+import {Config} from "./config";
 import {getFirstMatch, getStringBetween, toEndOfLine} from "./util";
 import {HelpVerb, Tenses} from "../dictionary/verbs";
 
 /**
- * Extract content from file according to validated content type.
+ * Extract specific content from raw data according to type.
  * @constructor
  * @param config ParserConfigLanguageData
  */
 export class Extractor {
-  config: ParserConfigLanguageData;
+  config: Config;
 
-  constructor(config: ParserConfigLanguageData) {
+  constructor(config: Config) {
     this.config = config;
   }
 

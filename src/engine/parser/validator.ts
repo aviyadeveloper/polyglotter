@@ -1,14 +1,14 @@
-import {ParserConfigLanguageData} from "./config";
+import {Config} from "./config";
 
 /**
- * Distinguish and cataogrize different linguistic forms using the language configuration.
+ * Distinguish and cataogrize different linguistic forms using the language config.
  * @constructor
  * @param config ParserConfigLanguageData
  */
 export class Validator {
-  config: ParserConfigLanguageData;
+  config: Config;
 
-  constructor(config: ParserConfigLanguageData) {
+  constructor(config: Config) {
     this.config = config;
   }
 
