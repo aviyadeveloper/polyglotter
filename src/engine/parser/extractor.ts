@@ -136,4 +136,15 @@ export class Extractor {
       this.config.TAGS.WORD.DATA.VERB.TENSES.SUBJUNCTIVE_2
     ),
   });
+
+  getTag = (definition: string) =>
+    definition.substring(0, definition.indexOf("]") + 1);
+
+  _hasTag = (tag: string, data: string[]) => data.indexOf(tag) > -1;
+
+  /**
+   * Filter data by tag association
+   */
+  getDataForTag = (tag: string, data: string[]) =>
+    data.filter((d) => this._hasTag(tag, data));
 }

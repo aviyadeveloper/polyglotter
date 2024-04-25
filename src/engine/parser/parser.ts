@@ -62,7 +62,7 @@ export class Parser {
       // stop collecting lines, process collected page, clear buffer.
       if (this._pageTagClosed(line)) {
         collectLines = false;
-        this.processor.page(page, this.dictionary);
+        this.processor.processPage(page, this.dictionary);
         page = "";
       }
     });
