@@ -1,16 +1,16 @@
-import {Language} from "../types";
-import {PARSER_CONFIG} from "./config";
+import {Config} from "./config";
 import {Validator} from "./validator";
 
-describe("Test parser validator", () => {
+describe("Test validator class", () => {
+  let config: Config;
+  let validator: Validator;
+
+  beforeAll(() => {
+    config = new Config();
+    validator = new Validator(config);
+  });
+
   test("validator initalized correctly", () => {
-    // Arrange
-    const config = PARSER_CONFIG[Language.GERMAN];
-
-    // Act
-    const validator = new Validator(config);
-
-    // Assert
     expect(validator.config).toBe(config);
     expect(validator.hasRelevantType).toBeDefined();
     expect(validator.isIntransitive).toBeDefined();
@@ -23,9 +23,6 @@ describe("Test parser validator", () => {
 
   test("validate has relevant type", () => {
     // Arrange
-    const config = PARSER_CONFIG[Language.GERMAN];
-    const validator = new Validator(config);
-
     const allRelevantTypes = [
       "{{Wortart|Substantiv|Deutsch}}",
       "{{Wortart|Verb|Deutsch}}",
@@ -49,11 +46,10 @@ describe("Test parser validator", () => {
 
   test("validate has relevant type without relevant type", () => {
     // Arrange
-    const config = PARSER_CONFIG[Language.GERMAN];
-    const validator = new Validator(config);
+    const data = ["foo", "bar"];
 
     // Act
-    const result = validator.hasRelevantType(["foo", "bar"]);
+    const result = validator.hasRelevantType(data);
 
     // Assert
     expect(result).toBeFalsy();
